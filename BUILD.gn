@@ -1,0 +1,92 @@
+# MIT License
+
+# Copyright (c) 2022 Tracy
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+config("gtest_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "googletest" ]
+}
+
+config("gtest_public_config") {
+  include_dirs = [ "googletest/include" ]
+}
+
+static_library("gtest") {
+  testonly = true
+  public = [
+    "googletest/include/gtest/gtest-spi.h",
+    "googletest/include/gtest/gtest.h",
+  ]
+  sources = [
+    "googletest/src/gtest-all.cc",
+    "googletest/src/gtest-assertion-result.cc",
+    "googletest/src/gtest-death-test.cc",
+    "googletest/src/gtest-filepath.cc",
+    "googletest/src/gtest-matchers.cc",
+    "googletest/src/gtest-port.cc",
+    "googletest/src/gtest-printers.cc",
+    "googletest/src/gtest-test-part.cc",
+    "googletest/src/gtest-typed-test.cc",
+    "googletest/src/gtest.cc",
+  ]
+  public_configs = [ ":gtest_public_config" ]
+  configs += [ ":gtest_config" ]
+}
+
+static_library("gtest_main") {
+  testonly = true
+  sources = [ "googletest/src/gtest_main.cc" ]
+  public_deps = [ ":gtest" ]
+}
+
+config("gmock_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "googlemock" ]
+}
+
+config("gmock_public_config") {
+  include_dirs = [ "googlemock/include" ]
+}
+
+static_library("gmock") {
+  testonly = true
+  public = [ "googlemock/include/gmock/gmock.h" ]
+  sources = [
+    "googlemock/src/gmock-all.cc",
+    "googlemock/src/gmock-cardinalities.cc",
+    "googlemock/src/gmock-internal-utils.cc",
+    "googlemock/src/gmock-matchers.cc",
+    "googlemock/src/gmock-spec-builders.cc",
+    "googlemock/src/gmock.cc",
+  ]
+  public_configs = [ ":gmock_public_config" ]
+  configs += [ ":gmock_config" ]
+  deps = [ ":gtest" ]
+}
+
+static_library("gmock_main") {
+  testonly = true
+  sources = [ "googlemock/src/gmock_main.cc" ]
+  public_deps = [
+    ":gmock",
+    ":gtest",
+  ]
+}
